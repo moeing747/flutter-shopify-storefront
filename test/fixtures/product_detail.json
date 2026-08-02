@@ -1,0 +1,67 @@
+{
+    "data": {
+        "__typename": "QueryRoot",
+        "product": {
+            "__typename": "Product",
+            "id": "gid://shopify/Product/7982853619734",
+            "title": "Slides",
+            "description": "Simple, minimal and comfortable, these slides feature a classic design in the perfect shade of iron. Whether you're just lounging around the house or running errands, these slides will offer all-day comfort.",
+            "featuredImage": {
+                "__typename": "Image",
+                "url": "https://cdn.shopify.com/s/files/1/0688/1755/1382/products/slides_1280x1280.jpg?v=1675447358"
+            },
+            "variants": {
+                "__typename": "ProductVariantConnection",
+                "edges": [
+                    {
+                        "__typename": "ProductVariantEdge",
+                        "node": {
+                            "__typename": "ProductVariant",
+                            "id": "gid://shopify/ProductVariant/43695710371862",
+                            "title": "Small",
+                            "availableForSale": true,
+                            "price": {
+                                "__typename": "MoneyV2",
+                                "amount": "25.0",
+                                "currencyCode": "CAD"
+                            }
+                        }
+                    },
+                    {
+                        "__typename": "ProductVariantEdge",
+                        "node": {
+                            "__typename": "ProductVariant",
+                            "id": "gid://shopify/ProductVariant/43695710404630",
+                            "title": "Medium",
+                            "availableForSale": true,
+                            "price": {
+                                "__typename": "MoneyV2",
+                                "amount": "25.0",
+                                "currencyCode": "CAD"
+                            }
+                        }
+                    },
+                    {
+                        "__typename": "ProductVariantEdge",
+                        "node": {
+                            "__typename": "ProductVariant",
+                            "id": "gid://shopify/ProductVariant/43695710437398",
+                            "title": "Large",
+                            "availableForSale": true,
+                            "price": {
+                                "__typename": "MoneyV2",
+                                "amount": "25.0",
+                                "currencyCode": "CAD"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "extensions": {
+        "cost": {
+            "requestedQueryCost": 55
+        }
+    }
+}

@@ -1,0 +1,59 @@
+{
+    "data": {
+        "__typename": "Mutation",
+        "cartCreate": {
+            "__typename": "CartCreatePayload",
+            "cart": {
+                "__typename": "Cart",
+                "id": "gid://shopify/Cart/hWNFBx4CGmwUD5q5ca0D2CXJ?key=fa5b8510fa060e412f70e3af3f86f334",
+                "checkoutUrl": "https://demostore.mock.shop/cart/c/hWNFBx4CGmwUD5q5ca0D2CXJ?key=fa5b8510fa060e412f70e3af3f86f334",
+                "totalQuantity": 2,
+                "cost": {
+                    "__typename": "CartCost",
+                    "subtotalAmount": {
+                        "__typename": "MoneyV2",
+                        "amount": "50.0",
+                        "currencyCode": "CAD"
+                    }
+                },
+                "lines": {
+                    "__typename": "BaseCartLineConnection",
+                    "edges": [
+                        {
+                            "__typename": "BaseCartLineEdge",
+                            "node": {
+                                "__typename": "CartLine",
+                                "id": "gid://shopify/CartLine/d1a7f522-e513-4ff5-857d-1a93599642aa?cart=hWNFBx4CGmwUD5q5ca0D2CXJ",
+                                "quantity": 2,
+                                "merchandise": {
+                                    "__typename": "ProductVariant",
+                                    "id": "gid://shopify/ProductVariant/43695710371862",
+                                    "title": "Small",
+                                    "price": {
+                                        "__typename": "MoneyV2",
+                                        "amount": "25.0",
+                                        "currencyCode": "CAD"
+                                    },
+                                    "image": {
+                                        "__typename": "Image",
+                                        "url": "https://cdn.shopify.com/s/files/1/0688/1755/1382/products/slides_320x320.jpg?v=1675447358"
+                                    },
+                                    "product": {
+                                        "__typename": "Product",
+                                        "title": "Slides"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "userErrors": []
+        }
+    },
+    "extensions": {
+        "cost": {
+            "requestedQueryCost": 112
+        }
+    }
+}

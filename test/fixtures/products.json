@@ -1,0 +1,104 @@
+{
+    "data": {
+        "__typename": "QueryRoot",
+        "products": {
+            "__typename": "ProductConnection",
+            "pageInfo": {
+                "__typename": "PageInfo",
+                "hasNextPage": true,
+                "endCursor": "eyJsYXN0X2lkIjo3OTgyOTA0NjM5NTEwLCJsYXN0X3ZhbHVlIjo3OTgyOTA0NjM5NTEwLCJvZmZzZXQiOjN9"
+            },
+            "edges": [
+                {
+                    "__typename": "ProductEdge",
+                    "node": {
+                        "__typename": "Product",
+                        "id": "gid://shopify/Product/7982853619734",
+                        "title": "Slides",
+                        "featuredImage": {
+                            "__typename": "Image",
+                            "url": "https://cdn.shopify.com/s/files/1/0688/1755/1382/products/slides_640x640.jpg?v=1675447358",
+                            "altText": null
+                        },
+                        "priceRange": {
+                            "__typename": "ProductPriceRange",
+                            "minVariantPrice": {
+                                "__typename": "MoneyV2",
+                                "amount": "25.0",
+                                "currencyCode": "CAD"
+                            }
+                        }
+                    }
+                },
+                {
+                    "__typename": "ProductEdge",
+                    "node": {
+                        "__typename": "Product",
+                        "id": "gid://shopify/Product/7982856273942",
+                        "title": "Sweatpants",
+                        "featuredImage": {
+                            "__typename": "Image",
+                            "url": "https://cdn.shopify.com/s/files/1/0688/1755/1382/products/GreenSweatpants01_640x640.jpg?v=1675455387",
+                            "altText": null
+                        },
+                        "priceRange": {
+                            "__typename": "ProductPriceRange",
+                            "minVariantPrice": {
+                                "__typename": "MoneyV2",
+                                "amount": "35.0",
+                                "currencyCode": "CAD"
+                            }
+                        }
+                    }
+                },
+                {
+                    "__typename": "ProductEdge",
+                    "node": {
+                        "__typename": "Product",
+                        "id": "gid://shopify/Product/7982902771734",
+                        "title": "Men's T-shirt",
+                        "featuredImage": {
+                            "__typename": "Image",
+                            "url": "https://cdn.shopify.com/s/files/1/0688/1755/1382/products/GreenTshirt01_640x640.jpg?v=1675455410",
+                            "altText": null
+                        },
+                        "priceRange": {
+                            "__typename": "ProductPriceRange",
+                            "minVariantPrice": {
+                                "__typename": "MoneyV2",
+                                "amount": "40.0",
+                                "currencyCode": "CAD"
+                            }
+                        }
+                    }
+                },
+                {
+                    "__typename": "ProductEdge",
+                    "node": {
+                        "__typename": "Product",
+                        "id": "gid://shopify/Product/7982904639510",
+                        "title": "Hoodie",
+                        "featuredImage": {
+                            "__typename": "Image",
+                            "url": "https://cdn.shopify.com/s/files/1/0688/1755/1382/products/GreenHoodie01_640x640.jpg?v=1739549220",
+                            "altText": null
+                        },
+                        "priceRange": {
+                            "__typename": "ProductPriceRange",
+                            "minVariantPrice": {
+                                "__typename": "MoneyV2",
+                                "amount": "90.0",
+                                "currencyCode": "CAD"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "extensions": {
+        "cost": {
+            "requestedQueryCost": 28
+        }
+    }
+}
