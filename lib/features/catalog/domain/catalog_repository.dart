@@ -1,5 +1,15 @@
+import 'catalog_filter.dart';
+import 'collection.dart';
 import 'product_connection.dart';
 
 abstract interface class CatalogRepository {
-  Future<ProductConnection> fetchProducts({int first, String? after});
+  /// One page of products for [filter]; [after] is the cursor of the
+  /// previous page.
+  Future<ProductConnection> fetchProducts({
+    CatalogFilter filter = CatalogFilter.all,
+    int first,
+    String? after,
+  });
+
+  Future<List<Collection>> fetchCollections();
 }

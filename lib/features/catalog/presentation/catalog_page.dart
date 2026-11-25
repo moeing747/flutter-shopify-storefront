@@ -7,6 +7,7 @@ import '../../../core/config/app_config.dart';
 import '../../../core/graphql/graphql_client.dart';
 import '../../cart/application/cart_controller.dart';
 import '../application/catalog_providers.dart';
+import '../domain/catalog_filter.dart';
 import '../domain/product_summary.dart';
 
 class CatalogPage extends ConsumerWidget {
@@ -15,11 +16,13 @@ class CatalogPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final catalog = ref.watch(catalogControllerProvider);
+    final filtered = ref.watch(catalogFilterProvider).collectionHandle != null;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(AppConfig.brand.displayName),
-        actions: const [_CartButton()],
+        actions: const [_SortButton(), _CartButton()],
+        bottom: const _CollectionChips(),
       ),
       body: catalog.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -30,7 +33,13 @@ class CatalogPage extends ConsumerWidget {
         data: (connection) {
           final items = connection.items;
           if (items.isEmpty) {
-            return const Center(child: Text('No products available.'));
+            return Center(
+              child: Text(
+                filtered
+                    ? 'No products in this collection.'
+                    : 'No products available.',
+              ),
+            );
           }
           // One extra slot at the end while more pages exist; building it
           // is the signal to fetch the next page.
@@ -57,6 +66,76 @@ class CatalogPage extends ConsumerWidget {
           );
         },
       ),
+    );
+  }
+}
+
+/// Collections as a horizontal chip row under the app bar. While loading or
+/// after a failure the row is simply absent; the grid does not depend on it.
+class _CollectionChips extends ConsumerWidget implements PreferredSizeWidget {
+  const _CollectionChips();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(52);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final collections = ref.watch(collectionsProvider).valueOrNull;
+    final selected = ref.watch(
+      catalogFilterProvider.select((f) => f.collectionHandle),
+    );
+    if (collections == null || collections.isEmpty) {
+      return const SizedBox(height: 52);
+    }
+    final controller = ref.read(catalogFilterProvider.notifier);
+
+    return SizedBox(
+      height: 52,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        children: [
+          ChoiceChip(
+            label: const Text('All'),
+            selected: selected == null,
+            onSelected: (_) => controller.selectCollection(null),
+          ),
+          for (final collection in collections) ...[
+            const SizedBox(width: 8),
+            ChoiceChip(
+              label: Text(collection.title),
+              selected: selected == collection.handle,
+              onSelected: (_) => controller.selectCollection(collection.handle),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _SortButton extends ConsumerWidget {
+  const _SortButton();
+
+  static const _labels = {
+    CatalogSort.shopDefault: 'Featured',
+    CatalogSort.priceLowToHigh: 'Price: low to high',
+    CatalogSort.priceHighToLow: 'Price: high to low',
+  };
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final sort = ref.watch(catalogFilterProvider.select((f) => f.sort));
+
+    return PopupMenuButton<CatalogSort>(
+      tooltip: 'Sort',
+      icon: const Icon(Icons.sort),
+      initialValue: sort,
+      onSelected: ref.read(catalogFilterProvider.notifier).sortBy,
+      itemBuilder: (context) => [
+        for (final entry in _labels.entries)
+          PopupMenuItem(value: entry.key, child: Text(entry.value)),
+      ],
     );
   }
 }

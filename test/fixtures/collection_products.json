@@ -1,0 +1,103 @@
+{
+  "data": {
+    "__typename": "QueryRoot",
+    "collection": {
+      "__typename": "Collection",
+      "id": "gid://shopify/Collection/429493780502",
+      "products": {
+        "__typename": "ProductConnection",
+        "pageInfo": {
+          "__typename": "PageInfo",
+          "hasNextPage": true,
+          "endCursor": "eyJjIjoicHJpY2UiLCJ2IjoiOTAuMCIsImkiOjIzfQ"
+        },
+        "edges": [
+          {
+            "__typename": "ProductEdge",
+            "node": {
+              "__typename": "Product",
+              "id": "gid://shopify/Product/7983595356182",
+              "title": "Gray Leather Sneakers",
+              "featuredImage": {
+                "__typename": "Image",
+                "url": "https://cdn.shopify.com/mock-shop-production-media/_seeds/demostore/a70ad4a5100e25be731159d1c6ec53517c407cf93a48ed3ca0184a879276d9c2.jpg?width=640&height=640",
+                "altText": null
+              },
+              "priceRange": {
+                "__typename": "ProductPriceRange",
+                "minVariantPrice": {
+                  "__typename": "MoneyV2",
+                  "amount": "1000.0",
+                  "currencyCode": "CAD"
+                }
+              }
+            }
+          },
+          {
+            "__typename": "ProductEdge",
+            "node": {
+              "__typename": "Product",
+              "id": "gid://shopify/Product/7983595487254",
+              "title": "High Top Sneakers",
+              "featuredImage": {
+                "__typename": "Image",
+                "url": "https://cdn.shopify.com/mock-shop-production-media/_seeds/demostore/bb74594d8c235ffbf67f512fa1a7583df84595d7320e5145b35f169b7a7f2f6c.jpg?width=640&height=640",
+                "altText": null
+              },
+              "priceRange": {
+                "__typename": "ProductPriceRange",
+                "minVariantPrice": {
+                  "__typename": "MoneyV2",
+                  "amount": "180.0",
+                  "currencyCode": "CAD"
+                }
+              }
+            }
+          },
+          {
+            "__typename": "ProductEdge",
+            "node": {
+              "__typename": "Product",
+              "id": "gid://shopify/Product/7982905098262",
+              "title": "Men's Crewneck",
+              "featuredImage": {
+                "__typename": "Image",
+                "url": "https://cdn.shopify.com/mock-shop-production-media/_seeds/demostore/4ecbbab490d5a90c04074428b4b0e09358c6895050db590ffbb84e1f8e05fbbc.jpg?width=640&height=640",
+                "altText": null
+              },
+              "priceRange": {
+                "__typename": "ProductPriceRange",
+                "minVariantPrice": {
+                  "__typename": "MoneyV2",
+                  "amount": "120.0",
+                  "currencyCode": "CAD"
+                }
+              }
+            }
+          },
+          {
+            "__typename": "ProductEdge",
+            "node": {
+              "__typename": "Product",
+              "id": "gid://shopify/Product/7983595323414",
+              "title": "White Leather Sneakers",
+              "featuredImage": {
+                "__typename": "Image",
+                "url": "https://cdn.shopify.com/mock-shop-production-media/_seeds/demostore/f29f7c2c49dfed5f080884f85ffcfd562294da2c83646d0a2c007e00fb2deeb1.jpg?width=640&height=640",
+                "altText": null
+              },
+              "priceRange": {
+                "__typename": "ProductPriceRange",
+                "minVariantPrice": {
+                  "__typename": "MoneyV2",
+                  "amount": "90.0",
+                  "currencyCode": "CAD"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

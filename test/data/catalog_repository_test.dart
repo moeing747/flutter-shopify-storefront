@@ -20,6 +20,11 @@ void main() {
     expect(first.imageUrl, contains('_640x640'));
     expect(first.minPrice.format(locale: 'en_US'), isNotEmpty);
 
-    expect(link.requests.single.variables, {'first': 4, 'after': null});
+    expect(link.requests.single.variables, {
+      'first': 4,
+      'after': null,
+      'sortKey': null,
+      'reverse': false,
+    });
   });
 }

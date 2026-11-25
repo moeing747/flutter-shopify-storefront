@@ -1,0 +1,82 @@
+{
+  "data": {
+    "__typename": "QueryRoot",
+    "collections": {
+      "__typename": "CollectionConnection",
+      "edges": [
+        {
+          "__typename": "CollectionEdge",
+          "node": {
+            "__typename": "Collection",
+            "id": "gid://shopify/Collection/429493780502",
+            "handle": "men",
+            "title": "Men"
+          }
+        },
+        {
+          "__typename": "CollectionEdge",
+          "node": {
+            "__typename": "Collection",
+            "id": "gid://shopify/Collection/429493813270",
+            "handle": "women",
+            "title": "Women"
+          }
+        },
+        {
+          "__typename": "CollectionEdge",
+          "node": {
+            "__typename": "Collection",
+            "id": "gid://shopify/Collection/429493846038",
+            "handle": "unisex",
+            "title": "Unisex"
+          }
+        },
+        {
+          "__typename": "CollectionEdge",
+          "node": {
+            "__typename": "Collection",
+            "id": "gid://shopify/Collection/429493911574",
+            "handle": "tops",
+            "title": "Tops"
+          }
+        },
+        {
+          "__typename": "CollectionEdge",
+          "node": {
+            "__typename": "Collection",
+            "id": "gid://shopify/Collection/429493944342",
+            "handle": "bottoms",
+            "title": "Bottoms"
+          }
+        },
+        {
+          "__typename": "CollectionEdge",
+          "node": {
+            "__typename": "Collection",
+            "id": "gid://shopify/Collection/429493977110",
+            "handle": "accessories",
+            "title": "Accessories"
+          }
+        },
+        {
+          "__typename": "CollectionEdge",
+          "node": {
+            "__typename": "Collection",
+            "id": "gid://shopify/Collection/429512622102",
+            "handle": "featured",
+            "title": "Featured"
+          }
+        },
+        {
+          "__typename": "CollectionEdge",
+          "node": {
+            "__typename": "Collection",
+            "id": "gid://shopify/Collection/429531037718",
+            "handle": "shoes",
+            "title": "Shoes"
+          }
+        }
+      ]
+    }
+  }
+}

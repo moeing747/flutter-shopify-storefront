@@ -2,6 +2,8 @@ import 'package:basics_storefront/core/graphql/graphql_client.dart';
 import 'package:basics_storefront/core/domain/money.dart';
 import 'package:basics_storefront/features/cart/application/cart_controller.dart';
 import 'package:basics_storefront/features/catalog/application/catalog_providers.dart';
+import 'package:basics_storefront/features/catalog/domain/catalog_filter.dart';
+import 'package:basics_storefront/features/catalog/domain/collection.dart';
 import 'package:basics_storefront/features/catalog/domain/catalog_repository.dart';
 import 'package:basics_storefront/features/catalog/domain/product_connection.dart';
 import 'package:basics_storefront/features/catalog/domain/product_summary.dart';
@@ -19,18 +21,34 @@ class FakeCatalogRepository implements CatalogRepository {
   /// pages[cursor] the page after that cursor.
   final Map<String?, ProductConnection> pages;
   final requestedCursors = <String?>[];
+  final requestedFilters = <CatalogFilter>[];
+  List<Collection> collections = const [];
 
   @override
-  Future<ProductConnection> fetchProducts({int first = 20, String? after}) {
+  Future<ProductConnection> fetchProducts({
+    CatalogFilter filter = CatalogFilter.all,
+    int first = 20,
+    String? after,
+  }) {
     requestedCursors.add(after);
+    requestedFilters.add(filter);
     return Future.value(pages[after]!);
   }
+
+  @override
+  Future<List<Collection>> fetchCollections() async => collections;
 }
 
 class ThrowingCatalogRepository implements CatalogRepository {
   @override
-  Future<ProductConnection> fetchProducts({int first = 20, String? after}) =>
-      throw StorefrontException('Network error');
+  Future<ProductConnection> fetchProducts({
+    CatalogFilter filter = CatalogFilter.all,
+    int first = 20,
+    String? after,
+  }) => throw StorefrontException('Network error');
+
+  @override
+  Future<List<Collection>> fetchCollections() async => const [];
 }
 
 ProductSummary product(int n) => ProductSummary(
@@ -104,5 +122,46 @@ void main() {
 
     expect(find.textContaining('Network error'), findsOneWidget);
     expect(find.widgetWithText(FilledButton, 'Retry'), findsOneWidget);
+  });
+
+  testWidgets('selecting a collection chip refetches with its handle', (
+    tester,
+  ) async {
+    final repo =
+        FakeCatalogRepository({
+            null: page([1, 2]),
+          })
+          ..collections = const [
+            Collection(
+              id: 'gid://shopify/Collection/1',
+              handle: 'men',
+              title: 'Men',
+            ),
+          ];
+    await tester.pumpWidget(appWith(repo));
+    await tester.pumpAndSettle();
+
+    expect(find.widgetWithText(ChoiceChip, 'All'), findsOneWidget);
+    await tester.tap(find.widgetWithText(ChoiceChip, 'Men'));
+    await tester.pumpAndSettle();
+
+    expect(repo.requestedFilters.last.collectionHandle, 'men');
+    expect(repo.requestedFilters.first.collectionHandle, isNull);
+  });
+
+  testWidgets('choosing a sort order refetches the first page', (tester) async {
+    final repo = FakeCatalogRepository({
+      null: page([1, 2]),
+    });
+    await tester.pumpWidget(appWith(repo));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Sort'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Price: high to low'));
+    await tester.pumpAndSettle();
+
+    expect(repo.requestedFilters.last.sort, CatalogSort.priceHighToLow);
+    expect(repo.requestedCursors.last, isNull);
   });
 }
