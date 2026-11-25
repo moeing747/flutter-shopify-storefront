@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/graphql/graphql_client.dart';
 import '../../cart/application/cart_controller.dart';
 import '../application/product_providers.dart';
 import '../domain/product_detail.dart';
@@ -62,7 +63,7 @@ class _ProductPageState extends ConsumerState<ProductPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(error.toString(), textAlign: TextAlign.center),
+                Text(describeError(error), textAlign: TextAlign.center),
                 const SizedBox(height: 12),
                 FilledButton(
                   onPressed: () =>

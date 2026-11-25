@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../config/app_config.dart';
+import '../domain/json_object.dart';
 
 final graphQLClientProvider = Provider<GraphQLClient>((ref) {
   final httpLink = HttpLink(
@@ -24,6 +25,7 @@ final graphQLClientProvider = Provider<GraphQLClient>((ref) {
   );
 });
 
+/// A failure the user can be told about. [message] is safe to show as is.
 class StorefrontException implements Exception {
   StorefrontException(this.message);
 
@@ -31,7 +33,7 @@ class StorefrontException implements Exception {
     final exception = result.exception;
     if (exception == null) return StorefrontException('Unknown error');
     if (exception.linkException != null) {
-      return StorefrontException('Network error – please try again.');
+      return StorefrontException('Network error, please try again.');
     }
     return StorefrontException(
       exception.graphqlErrors.map((e) => e.message).join(', '),
@@ -43,3 +45,20 @@ class StorefrontException implements Exception {
   @override
   String toString() => message;
 }
+
+/// The response body of a successful request as a typed view. A request
+/// that failed, or came back without data, becomes a [StorefrontException].
+JsonObject dataOf(QueryResult result) {
+  if (result.hasException) throw StorefrontException.fromResult(result);
+  final data = result.data;
+  if (data == null) throw StorefrontException('Empty response from the shop.');
+  return JsonObject(data);
+}
+
+/// What to show the user for any error that reached the UI. Only
+/// [StorefrontException] carries a message written for people; everything
+/// else, including a malformed response, gets a generic line and is left to
+/// the logs.
+String describeError(Object error) => error is StorefrontException
+    ? error.message
+    : 'Something went wrong, please try again.';

@@ -1,5 +1,6 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 
+import '../../../core/domain/json_object.dart';
 import '../../../core/domain/money.dart';
 import '../../../core/graphql/graphql_client.dart';
 import '../domain/cart.dart';
@@ -87,9 +88,7 @@ class GraphQLCartRepository implements CartRepository {
       ),
     );
 
-    if (result.hasException) throw StorefrontException.fromResult(result);
-
-    final node = result.data!['cart'] as Map<String, dynamic>?;
+    final node = dataOf(result).objectOrNull('cart');
     return node == null ? null : _mapCart(node);
   }
 
@@ -128,47 +127,36 @@ class GraphQLCartRepository implements CartRepository {
       MutationOptions(document: gql(document), variables: variables),
     );
 
-    if (result.hasException) throw StorefrontException.fromResult(result);
-
-    final payload = result.data![field] as Map<String, dynamic>;
-    final userErrors = (payload['userErrors'] as List?) ?? const [];
+    final payload = dataOf(result).object(field);
+    final userErrors = payload.objects('userErrors');
     if (userErrors.isNotEmpty) {
       throw StorefrontException(
-        userErrors
-            .map((e) => (e as Map<String, dynamic>)['message'])
-            .join(', '),
+        userErrors.map((e) => e.string('message')).join(', '),
       );
     }
 
-    return _mapCart(payload['cart'] as Map<String, dynamic>);
+    return _mapCart(payload.object('cart'));
   }
 
-  Cart _mapCart(Map<String, dynamic> node) {
-    final lineEdges = (node['lines']['edges'] as List)
-        .cast<Map<String, dynamic>>();
+  Cart _mapCart(JsonObject node) => Cart(
+    id: node.string('id'),
+    checkoutUrl: node.string('checkoutUrl'),
+    totalQuantity: node.integer('totalQuantity'),
+    subtotal: Money.read(node.object('cost').object('subtotalAmount')),
+    lines: node.object('lines').objects('edges').map(_line).toList(),
+  );
 
-    return Cart(
-      id: node['id'] as String,
-      checkoutUrl: node['checkoutUrl'] as String,
-      totalQuantity: node['totalQuantity'] as int,
-      subtotal: Money.fromJson(
-        node['cost']['subtotalAmount'] as Map<String, dynamic>,
-      ),
-      lines: lineEdges.map((edge) {
-        final line = edge['node'] as Map<String, dynamic>;
-        final merchandise = line['merchandise'] as Map<String, dynamic>;
-        return CartLine(
-          id: line['id'] as String,
-          quantity: line['quantity'] as int,
-          variantId: merchandise['id'] as String,
-          variantTitle: merchandise['title'] as String,
-          productTitle: merchandise['product']['title'] as String,
-          price: Money.fromJson(merchandise['price'] as Map<String, dynamic>),
-          imageUrl:
-              (merchandise['image'] as Map<String, dynamic>?)?['url']
-                  as String?,
-        );
-      }).toList(),
+  static CartLine _line(JsonObject edge) {
+    final line = edge.object('node');
+    final merchandise = line.object('merchandise');
+    return CartLine(
+      id: line.string('id'),
+      quantity: line.integer('quantity'),
+      variantId: merchandise.string('id'),
+      variantTitle: merchandise.string('title'),
+      productTitle: merchandise.object('product').string('title'),
+      price: Money.read(merchandise.object('price')),
+      imageUrl: merchandise.objectOrNull('image')?.stringOrNull('url'),
     );
   }
 }

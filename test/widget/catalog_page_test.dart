@@ -1,3 +1,4 @@
+import 'package:basics_storefront/core/graphql/graphql_client.dart';
 import 'package:basics_storefront/core/domain/money.dart';
 import 'package:basics_storefront/features/cart/application/cart_controller.dart';
 import 'package:basics_storefront/features/catalog/application/catalog_providers.dart';
@@ -29,7 +30,7 @@ class FakeCatalogRepository implements CatalogRepository {
 class ThrowingCatalogRepository implements CatalogRepository {
   @override
   Future<ProductConnection> fetchProducts({int first = 20, String? after}) =>
-      throw Exception('Network error');
+      throw StorefrontException('Network error');
 }
 
 ProductSummary product(int n) => ProductSummary(

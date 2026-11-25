@@ -88,6 +88,6 @@ class CartController extends AsyncNotifier<Cart?> {
     final error = state.error;
     if (error == null) return null;
     state = AsyncData(state.valueOrNull);
-    return error is StorefrontException ? error.message : error.toString();
+    return describeError(error);
   }
 }

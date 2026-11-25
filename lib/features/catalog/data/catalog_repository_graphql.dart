@@ -1,5 +1,6 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 
+import '../../../core/domain/json_object.dart';
 import '../../../core/domain/money.dart';
 import '../../../core/graphql/graphql_client.dart';
 import '../domain/catalog_repository.dart';
@@ -45,28 +46,23 @@ class GraphQLCatalogRepository implements CatalogRepository {
       ),
     );
 
-    if (result.hasException) throw StorefrontException.fromResult(result);
-
-    final connection = result.data!['products'] as Map<String, dynamic>;
-    final pageInfo = connection['pageInfo'] as Map<String, dynamic>;
-    final edges = (connection['edges'] as List).cast<Map<String, dynamic>>();
+    final connection = dataOf(result).object('products');
+    final pageInfo = connection.object('pageInfo');
 
     return ProductConnection(
-      hasNextPage: pageInfo['hasNextPage'] as bool,
-      endCursor: pageInfo['endCursor'] as String?,
-      items: edges.map((edge) {
-        final node = edge['node'] as Map<String, dynamic>;
-        return ProductSummary(
-          id: node['id'] as String,
-          title: node['title'] as String,
-          imageUrl:
-              (node['featuredImage'] as Map<String, dynamic>?)?['url']
-                  as String?,
-          minPrice: Money.fromJson(
-            node['priceRange']['minVariantPrice'] as Map<String, dynamic>,
-          ),
-        );
-      }).toList(),
+      hasNextPage: pageInfo.boolean('hasNextPage'),
+      endCursor: pageInfo.stringOrNull('endCursor'),
+      items: connection.objects('edges').map(_summary).toList(),
+    );
+  }
+
+  static ProductSummary _summary(JsonObject edge) {
+    final node = edge.object('node');
+    return ProductSummary(
+      id: node.string('id'),
+      title: node.string('title'),
+      imageUrl: node.objectOrNull('featuredImage')?.stringOrNull('url'),
+      minPrice: Money.read(node.object('priceRange').object('minVariantPrice')),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 
+import '../../../core/domain/json_object.dart';
 import '../../../core/domain/money.dart';
 import '../../../core/graphql/graphql_client.dart';
 import '../domain/product_detail.dart';
@@ -37,29 +38,25 @@ class GraphQLProductRepository implements ProductRepository {
       QueryOptions(document: gql(productQuery), variables: {'id': id}),
     );
 
-    if (result.hasException) throw StorefrontException.fromResult(result);
-
-    final node = result.data!['product'] as Map<String, dynamic>?;
+    final node = dataOf(result).objectOrNull('product');
     if (node == null) throw StorefrontException('Product not found');
 
-    final variantEdges = (node['variants']['edges'] as List)
-        .cast<Map<String, dynamic>>();
-
     return ProductDetail(
-      id: node['id'] as String,
-      title: node['title'] as String,
-      description: node['description'] as String? ?? '',
-      imageUrl:
-          (node['featuredImage'] as Map<String, dynamic>?)?['url'] as String?,
-      variants: variantEdges.map((edge) {
-        final variant = edge['node'] as Map<String, dynamic>;
-        return ProductVariant(
-          id: variant['id'] as String,
-          title: variant['title'] as String,
-          availableForSale: variant['availableForSale'] as bool,
-          price: Money.fromJson(variant['price'] as Map<String, dynamic>),
-        );
-      }).toList(),
+      id: node.string('id'),
+      title: node.string('title'),
+      description: node.stringOrNull('description') ?? '',
+      imageUrl: node.objectOrNull('featuredImage')?.stringOrNull('url'),
+      variants: node.object('variants').objects('edges').map(_variant).toList(),
+    );
+  }
+
+  static ProductVariant _variant(JsonObject edge) {
+    final node = edge.object('node');
+    return ProductVariant(
+      id: node.string('id'),
+      title: node.string('title'),
+      availableForSale: node.boolean('availableForSale'),
+      price: Money.read(node.object('price')),
     );
   }
 }

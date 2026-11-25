@@ -1,13 +1,18 @@
 import 'package:intl/intl.dart';
 
+import 'json_object.dart';
+
 /// A Storefront API MoneyV2 value. Amounts stay as strings; parsing happens
 /// only for display formatting, never for arithmetic.
 class Money {
   const Money({required this.amount, required this.currencyCode});
 
-  factory Money.fromJson(Map<String, dynamic> json) => Money(
-    amount: json['amount'] as String,
-    currencyCode: json['currencyCode'] as String,
+  factory Money.fromJson(Map<String, dynamic> json) =>
+      Money.read(JsonObject(json));
+
+  factory Money.read(JsonObject json) => Money(
+    amount: json.string('amount'),
+    currencyCode: json.string('currencyCode'),
   );
 
   final String amount;

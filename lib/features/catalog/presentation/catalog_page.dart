@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/config/app_config.dart';
+import '../../../core/graphql/graphql_client.dart';
 import '../../cart/application/cart_controller.dart';
 import '../application/catalog_providers.dart';
 import '../domain/product_summary.dart';
@@ -23,7 +24,7 @@ class CatalogPage extends ConsumerWidget {
       body: catalog.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => _ErrorRetry(
-          message: error.toString(),
+          message: describeError(error),
           onRetry: () => ref.invalidate(catalogControllerProvider),
         ),
         data: (connection) {

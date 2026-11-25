@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:basics_storefront/core/domain/money.dart';
+import 'package:basics_storefront/core/graphql/graphql_client.dart';
 import 'package:basics_storefront/features/cart/application/cart_controller.dart';
 import 'package:basics_storefront/features/cart/domain/cart.dart';
 import 'package:basics_storefront/features/cart/domain/cart_repository.dart';
@@ -91,7 +92,7 @@ void main() {
   test('addLine reports failure', () async {
     when(
       () => repository.createCart('variant-1', quantity: 1),
-    ).thenThrow(Exception('sold out'));
+    ).thenThrow(StorefrontException('sold out'));
 
     final controller = container.read(cartControllerProvider.notifier);
     expect(await controller.addLine('variant-1'), isFalse);
@@ -135,7 +136,7 @@ void main() {
       ).thenAnswer((_) async => cartWith(quantity: 1));
       when(
         () => repository.addLine(any(), any(), quantity: 1),
-      ).thenThrow(Exception('sold out'));
+      ).thenThrow(StorefrontException('sold out'));
 
       final controller = container.read(cartControllerProvider.notifier);
       await controller.addLine('variant-1');
