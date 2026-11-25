@@ -16,7 +16,7 @@ increasing build number `N` for the stores. One tag per release (`vX.Y.Z`).
    ```bash
    flutter build appbundle --release \
      --obfuscate --split-debug-info=build/symbols \
-     --dart-define=BRAND=snocks \
+     --dart-define=BRAND=basics \
      --dart-define=STOREFRONT_ENDPOINT=... --dart-define=STOREFRONT_TOKEN=...
    ```
 3. Upload the `.aab` to the **internal track**, QA on real devices, then

@@ -1,5 +1,5 @@
 name: basics_storefront
-description: "Flutter storefront work sample against the Shopify Storefront GraphQL API."
+description: "Flutter e-commerce app against the Shopify Storefront GraphQL API."
 publish_to: 'none'
 version: 0.1.0+1
 

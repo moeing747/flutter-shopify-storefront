@@ -71,18 +71,18 @@ Other choices, briefly:
   whatever `MoneyV2` the API returns, so against a real EUR shop everything
   is in euros with zero code change.
 
-### Brands as build flavors
+### Shops as build flavors
 
-`AppConfig` reads endpoint, token, and **brand** from `--dart-define`. A
-"House of Brands" company can ship one app per label from this single
-codebase — theme, name, and shop endpoint switch at build time:
+`AppConfig` reads endpoint, token and brand from `--dart-define`. A company
+with several shops can ship one app per shop from this single codebase:
+theme, name and endpoint switch at build time.
 
 ```bash
-flutter run --dart-define=BRAND=snocks
+flutter run --dart-define=BRAND=outlet
 flutter run \
   --dart-define=STOREFRONT_ENDPOINT=https://SHOP.myshopify.com/api/2025-07/graphql.json \
   --dart-define=STOREFRONT_TOKEN=PUBLIC_STOREFRONT_TOKEN \
-  --dart-define=BRAND=oceansapart
+  --dart-define=BRAND=basics
 ```
 
 ### Testing: how the GraphQL API is mocked

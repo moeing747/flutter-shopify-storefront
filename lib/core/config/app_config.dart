@@ -18,12 +18,11 @@ abstract final class AppConfig {
   static Brand get brand => Brand.byKey(brandKey);
 }
 
+/// Build flavors. One codebase can ship one app per shop: theme, name and
+/// endpoint switch at build time via `--dart-define=BRAND=...`.
 enum Brand {
   basics('Basics Storefront', Color(0xFF1F2933)),
-  snocks('SNOCKS', Color(0xFF00B67A)),
-  oceansapart('OCEANSAPART', Color(0xFF2A6F97)),
-  femtis('femtis', Color(0xFF9D4EDD)),
-  lesLunes('Les Lunes', Color(0xFFB08968));
+  outlet('Basics Outlet', Color(0xFF2A6F97));
 
   const Brand(this.displayName, this.seedColor);
 
