@@ -1,8 +1,9 @@
 # Basics Storefront
 
 A small, production-shaped **Flutter e-commerce app** built against the
-**Shopify Storefront GraphQL API**: browse products, pick a variant, manage a
-server-side Shopify cart, and hand off to Shopify's hosted checkout.
+**Shopify Storefront GraphQL API**: browse products by collection, sort by
+price, pick a variant, manage a server-side Shopify cart, and hand off to
+Shopify's hosted checkout. UI in English and German.
 
 It runs out of the box with zero credentials against
 [mock.shop](https://mock.shop) — Shopify's public mock Storefront API — and
@@ -34,9 +35,11 @@ flutter test integration_test -d <device-id>
 
 ```
 lib/
-  core/            config (flavors/brands), GraphQL client, shared domain (Money)
+  core/            config (flavors), GraphQL client + error kinds, typed JSON
+                   reader, shared domain (Money), l10n helpers
+  l10n/            ARB files (en, de) and the generated AppLocalizations
   features/
-    catalog/       product grid
+    catalog/       product grid, collection filter, sort
     product/       detail + variant selection
     cart/          Shopify cart mutations, cart state, checkout hand-off
       domain/      models + repository interface (no Flutter, no GraphQL)
@@ -63,8 +66,16 @@ Other choices, briefly:
 - **The cart lives server-side** (Shopify cart mutations, cart ID held in a
   controller). Checkout is a hand-off to Shopify's hosted `checkoutUrl`, so
   payment never touches app code and PCI scope stays at zero.
+- **Responses are read through a typed JSON view** (`JsonObject`). A field of
+  the wrong type fails with its JSON path instead of a cast error inside a
+  mapper, and malformed data never reaches a widget.
+- **Errors are classified in the data layer and worded in the UI.**
+  `StorefrontException` carries a kind (network, server, not found, ...) plus
+  the shop's own message when there is one; `describeError()` turns that into
+  localized text. Repositories never produce English sentences.
 - **Money stays decimal-safe** — amounts are kept as strings from the API and
-  only parsed for display formatting, never for arithmetic.
+  only parsed for display formatting, never for arithmetic, in the device
+  locale.
 - **Prices show CAD in the demo** because mock.shop's data is a Canadian
   demo store with no other markets configured (it accepts `@inContext` but
   has no localized pricing). The app is currency-agnostic — it renders
@@ -109,7 +120,7 @@ icons, per-ABI splits).
 
 ## What I'd do next
 
-- Localization (`flutter_localizations` + German strings) — prices already
-  format per locale via `intl`.
+- Search through the Storefront `query` argument. The code path is a one-line
+  variable; mock.shop ignores the argument, so it waits for a real shop.
 - Sentry + store-release automation via fastlane/codemagic.
-- Search, filters, and per-line cart busy states.
+- Per-line cart busy states, and a golden test per screen in both locales.
