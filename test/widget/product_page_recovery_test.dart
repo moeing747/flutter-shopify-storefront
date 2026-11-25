@@ -7,6 +7,7 @@ import 'package:basics_storefront/features/product/application/product_providers
 import 'package:basics_storefront/features/product/domain/product_detail.dart';
 import 'package:basics_storefront/features/product/domain/product_repository.dart';
 import 'package:basics_storefront/features/product/presentation/product_page.dart';
+import 'package:basics_storefront/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -33,7 +34,9 @@ class FlakyProductRepository implements ProductRepository {
   @override
   Future<ProductDetail> fetchProduct(String id) async {
     calls++;
-    if (calls == 1) throw StorefrontException('temporary network error');
+    if (calls == 1) {
+      throw const StorefrontException.server('temporary network error');
+    }
     return _detail;
   }
 }
@@ -44,21 +47,21 @@ class FailingCartRepository implements CartRepository {
 
   @override
   Future<Cart> createCart(String variantId, {int quantity = 1}) async =>
-      throw StorefrontException('sold out');
+      throw const StorefrontException.server('sold out');
 
   @override
   Future<Cart> addLine(
     String cartId,
     String variantId, {
     int quantity = 1,
-  }) async => throw StorefrontException('sold out');
+  }) async => throw const StorefrontException.server('sold out');
 
   @override
   Future<Cart> updateLineQuantity(
     String cartId,
     String lineId,
     int quantity,
-  ) async => throw StorefrontException('sold out');
+  ) async => throw const StorefrontException.server('sold out');
 }
 
 void main() {
@@ -76,6 +79,8 @@ void main() {
           cartIdStoreProvider.overrideWithValue(InMemoryCartIdStore()),
         ],
         child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           navigatorKey: nav,
           home: const Scaffold(body: Text('home')),
         ),
@@ -114,7 +119,11 @@ void main() {
           productRepositoryProvider.overrideWithValue(repo),
           cartIdStoreProvider.overrideWithValue(InMemoryCartIdStore()),
         ],
-        child: const MaterialApp(home: ProductPage(productId: 'p1')),
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ProductPage(productId: 'p1'),
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -138,7 +147,11 @@ void main() {
           cartRepositoryProvider.overrideWithValue(FailingCartRepository()),
           cartIdStoreProvider.overrideWithValue(InMemoryCartIdStore()),
         ],
-        child: const MaterialApp(home: ProductPage(productId: 'p1')),
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ProductPage(productId: 'p1'),
+        ),
       ),
     );
     await tester.pumpAndSettle();

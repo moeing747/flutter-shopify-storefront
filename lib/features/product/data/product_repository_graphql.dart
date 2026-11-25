@@ -39,7 +39,9 @@ class GraphQLProductRepository implements ProductRepository {
     );
 
     final node = dataOf(result).objectOrNull('product');
-    if (node == null) throw StorefrontException('Product not found');
+    if (node == null) {
+      throw const StorefrontException(StorefrontErrorKind.productNotFound);
+    }
 
     return ProductDetail(
       id: node.string('id'),

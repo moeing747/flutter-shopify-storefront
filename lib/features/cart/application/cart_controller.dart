@@ -84,10 +84,12 @@ class CartController extends AsyncNotifier<Cart?> {
     }
   }
 
-  String? consumeError() {
+  /// Takes the pending error off the state (back to the last good cart) and
+  /// returns it, so the UI can show it exactly once.
+  Object? consumeError() {
     final error = state.error;
     if (error == null) return null;
     state = AsyncData(state.valueOrNull);
-    return describeError(error);
+    return error;
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/graphql/graphql_client.dart';
+import '../../../core/l10n/l10n.dart';
 import '../../cart/application/cart_controller.dart';
 import '../application/product_providers.dart';
 import '../domain/product_detail.dart';
@@ -63,12 +64,15 @@ class _ProductPageState extends ConsumerState<ProductPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(describeError(error), textAlign: TextAlign.center),
+                Text(
+                  describeError(context.l10n, error),
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 12),
                 FilledButton(
                   onPressed: () =>
                       ref.invalidate(productProvider(widget.productId)),
-                  child: const Text('Retry'),
+                  child: Text(context.l10n.retry),
                 ),
               ],
             ),
@@ -135,7 +139,7 @@ class _ProductView extends ConsumerWidget {
                     const SizedBox(height: 8),
                     if (selectedVariant != null)
                       Text(
-                        selectedVariant.price.format(),
+                        context.money(selectedVariant.price),
                         style: theme.textTheme.titleLarge,
                       ),
                     if (!product.hasSingleVariant) ...[
@@ -174,6 +178,7 @@ class _ProductView extends ConsumerWidget {
               onPressed: selectedVariant == null || cartBusy
                   ? null
                   : () async {
+                      final l10n = context.l10n;
                       final messenger = ScaffoldMessenger.of(context);
                       final notifier = ref.read(
                         cartControllerProvider.notifier,
@@ -182,10 +187,12 @@ class _ProductView extends ConsumerWidget {
                         selectedVariant.id,
                       );
                       if (success == null) return;
+                      final error = success ? null : notifier.consumeError();
                       final message = success
-                          ? '${product.title} added to cart'
-                          : (notifier.consumeError() ??
-                                'Could not add to cart');
+                          ? l10n.addedToCart(product.title)
+                          : error == null
+                          ? l10n.addToCartFailed
+                          : describeError(l10n, error);
                       messenger.showSnackBar(
                         SnackBar(
                           content: Text(message),
@@ -194,7 +201,9 @@ class _ProductView extends ConsumerWidget {
                       );
                     },
               icon: const Icon(Icons.add_shopping_cart),
-              label: Text(cartBusy ? 'Adding…' : 'Add to cart'),
+              label: Text(
+                cartBusy ? context.l10n.adding : context.l10n.addToCart,
+              ),
             ),
           ),
         ),

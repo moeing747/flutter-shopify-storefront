@@ -6,6 +6,7 @@ import 'package:basics_storefront/features/product/application/product_providers
 import 'package:basics_storefront/features/product/domain/product_detail.dart';
 import 'package:basics_storefront/features/product/domain/product_repository.dart';
 import 'package:basics_storefront/features/product/presentation/product_page.dart';
+import 'package:basics_storefront/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -91,6 +92,8 @@ void main() {
           cartIdStoreProvider.overrideWithValue(InMemoryCartIdStore()),
         ],
         child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: ProductPage(productId: 'gid://shopify/Product/1'),
         ),
       ),

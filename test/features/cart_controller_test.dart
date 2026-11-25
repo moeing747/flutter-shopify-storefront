@@ -92,7 +92,7 @@ void main() {
   test('addLine reports failure', () async {
     when(
       () => repository.createCart('variant-1', quantity: 1),
-    ).thenThrow(StorefrontException('sold out'));
+    ).thenThrow(const StorefrontException.server('sold out'));
 
     final controller = container.read(cartControllerProvider.notifier);
     expect(await controller.addLine('variant-1'), isFalse);
@@ -136,7 +136,7 @@ void main() {
       ).thenAnswer((_) async => cartWith(quantity: 1));
       when(
         () => repository.addLine(any(), any(), quantity: 1),
-      ).thenThrow(StorefrontException('sold out'));
+      ).thenThrow(const StorefrontException.server('sold out'));
 
       final controller = container.read(cartControllerProvider.notifier);
       await controller.addLine('variant-1');
@@ -145,8 +145,15 @@ void main() {
       final state = container.read(cartControllerProvider);
       expect(state.hasError, isTrue);
 
-      final message = controller.consumeError();
-      expect(message, contains('sold out'));
+      final error = controller.consumeError();
+      expect(
+        error,
+        isA<StorefrontException>().having(
+          (e) => e.serverMessage,
+          'serverMessage',
+          'sold out',
+        ),
+      );
 
       final recovered = container.read(cartControllerProvider);
       expect(recovered.hasError, isFalse);

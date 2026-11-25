@@ -8,6 +8,7 @@ import 'package:basics_storefront/features/catalog/domain/catalog_repository.dar
 import 'package:basics_storefront/features/catalog/domain/product_connection.dart';
 import 'package:basics_storefront/features/catalog/domain/product_summary.dart';
 import 'package:basics_storefront/features/catalog/presentation/catalog_page.dart';
+import 'package:basics_storefront/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -45,7 +46,7 @@ class ThrowingCatalogRepository implements CatalogRepository {
     CatalogFilter filter = CatalogFilter.all,
     int first = 20,
     String? after,
-  }) => throw StorefrontException('Network error');
+  }) => throw const StorefrontException.network();
 
   @override
   Future<List<Collection>> fetchCollections() async => const [];
@@ -68,7 +69,11 @@ Widget appWith(CatalogRepository repository) => ProviderScope(
     catalogRepositoryProvider.overrideWithValue(repository),
     cartIdStoreProvider.overrideWithValue(InMemoryCartIdStore()),
   ],
-  child: const MaterialApp(home: CatalogPage()),
+  child: const MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: CatalogPage(),
+  ),
 );
 
 void main() {

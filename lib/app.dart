@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/config/app_config.dart';
+import 'core/l10n/l10n.dart';
 import 'features/cart/presentation/cart_page.dart';
 import 'features/catalog/presentation/catalog_page.dart';
 import 'features/product/presentation/product_page.dart';
@@ -38,6 +39,8 @@ class StorefrontApp extends StatelessWidget {
     return MaterialApp.router(
       title: brand.displayName,
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: _theme(brand, Brightness.light),
       darkTheme: _theme(brand, Brightness.dark),
       builder: kIsWeb ? _phoneFrame : null,

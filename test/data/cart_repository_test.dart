@@ -46,11 +46,13 @@ void main() {
     await expectLater(
       repository.createCart('gid://shopify/ProductVariant/invalid'),
       throwsA(
-        isA<StorefrontException>().having(
-          (e) => e.message,
-          'message',
-          contains('does not exist'),
-        ),
+        isA<StorefrontException>()
+            .having((e) => e.kind, 'kind', StorefrontErrorKind.server)
+            .having(
+              (e) => e.serverMessage,
+              'message',
+              contains('does not exist'),
+            ),
       ),
     );
   });

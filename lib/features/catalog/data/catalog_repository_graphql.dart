@@ -103,7 +103,7 @@ class GraphQLCatalogRepository implements CatalogRepository {
     } else {
       final collection = data.objectOrNull('collection');
       if (collection == null) {
-        throw StorefrontException('This collection no longer exists.');
+        throw const StorefrontException(StorefrontErrorKind.collectionNotFound);
       }
       connection = collection.object('products');
     }

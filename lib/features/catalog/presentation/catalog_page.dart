@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/config/app_config.dart';
 import '../../../core/graphql/graphql_client.dart';
+import '../../../core/l10n/l10n.dart';
 import '../../cart/application/cart_controller.dart';
 import '../application/catalog_providers.dart';
 import '../domain/catalog_filter.dart';
@@ -15,6 +16,7 @@ class CatalogPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final catalog = ref.watch(catalogControllerProvider);
     final filtered = ref.watch(catalogFilterProvider).collectionHandle != null;
 
@@ -27,7 +29,7 @@ class CatalogPage extends ConsumerWidget {
       body: catalog.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => _ErrorRetry(
-          message: describeError(error),
+          message: describeError(l10n, error),
           onRetry: () => ref.invalidate(catalogControllerProvider),
         ),
         data: (connection) {
@@ -35,9 +37,7 @@ class CatalogPage extends ConsumerWidget {
           if (items.isEmpty) {
             return Center(
               child: Text(
-                filtered
-                    ? 'No products in this collection.'
-                    : 'No products available.',
+                filtered ? l10n.noProductsInCollection : l10n.noProducts,
               ),
             );
           }
@@ -96,7 +96,7 @@ class _CollectionChips extends ConsumerWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         children: [
           ChoiceChip(
-            label: const Text('All'),
+            label: Text(context.l10n.catalogAll),
             selected: selected == null,
             onSelected: (_) => controller.selectCollection(null),
           ),
@@ -117,24 +117,26 @@ class _CollectionChips extends ConsumerWidget implements PreferredSizeWidget {
 class _SortButton extends ConsumerWidget {
   const _SortButton();
 
-  static const _labels = {
-    CatalogSort.shopDefault: 'Featured',
-    CatalogSort.priceLowToHigh: 'Price: low to high',
-    CatalogSort.priceHighToLow: 'Price: high to low',
-  };
+  static String _label(AppLocalizations l10n, CatalogSort sort) =>
+      switch (sort) {
+        CatalogSort.shopDefault => l10n.sortShopDefault,
+        CatalogSort.priceLowToHigh => l10n.sortPriceLowToHigh,
+        CatalogSort.priceHighToLow => l10n.sortPriceHighToLow,
+      };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final sort = ref.watch(catalogFilterProvider.select((f) => f.sort));
 
     return PopupMenuButton<CatalogSort>(
-      tooltip: 'Sort',
+      tooltip: l10n.sortTooltip,
       icon: const Icon(Icons.sort),
       initialValue: sort,
       onSelected: ref.read(catalogFilterProvider.notifier).sortBy,
       itemBuilder: (context) => [
-        for (final entry in _labels.entries)
-          PopupMenuItem(value: entry.key, child: Text(entry.value)),
+        for (final option in CatalogSort.values)
+          PopupMenuItem(value: option, child: Text(_label(l10n, option))),
       ],
     );
   }
@@ -206,7 +208,7 @@ class _ProductCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'from ${product.minPrice.format()}',
+                    context.l10n.fromPrice(context.money(product.minPrice)),
                     style: theme.textTheme.bodyMedium,
                   ),
                 ],
@@ -235,7 +237,7 @@ class _ErrorRetry extends StatelessWidget {
           children: [
             Text(message, textAlign: TextAlign.center),
             const SizedBox(height: 12),
-            FilledButton(onPressed: onRetry, child: const Text('Retry')),
+            FilledButton(onPressed: onRetry, child: Text(context.l10n.retry)),
           ],
         ),
       ),

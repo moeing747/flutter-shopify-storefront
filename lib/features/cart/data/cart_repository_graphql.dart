@@ -130,7 +130,7 @@ class GraphQLCartRepository implements CartRepository {
     final payload = dataOf(result).object(field);
     final userErrors = payload.objects('userErrors');
     if (userErrors.isNotEmpty) {
-      throw StorefrontException(
+      throw StorefrontException.server(
         userErrors.map((e) => e.string('message')).join(', '),
       );
     }

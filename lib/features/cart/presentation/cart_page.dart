@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/graphql/graphql_client.dart';
+import '../../../core/l10n/l10n.dart';
 import '../application/cart_controller.dart';
 import '../domain/cart.dart';
 
@@ -13,13 +15,11 @@ class CartPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen(cartControllerProvider, (_, next) {
       if (next.hasError) {
-        final message = ref
-            .read(cartControllerProvider.notifier)
-            .consumeError();
-        if (message != null && context.mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(message)));
+        final error = ref.read(cartControllerProvider.notifier).consumeError();
+        if (error != null && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(describeError(context.l10n, error))),
+          );
         }
       }
     });
@@ -28,11 +28,11 @@ class CartPage extends ConsumerWidget {
     final cart = cartState.valueOrNull;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Cart')),
+      appBar: AppBar(title: Text(context.l10n.cartTitle)),
       body: cart == null && cartState.isLoading
           ? const Center(child: CircularProgressIndicator())
           : cart == null || cart.isEmpty
-          ? const Center(child: Text('Your cart is empty.'))
+          ? Center(child: Text(context.l10n.cartEmpty))
           : Column(
               children: [
                 Expanded(
@@ -76,8 +76,8 @@ class _CartLineTile extends ConsumerWidget {
       title: Text(line.productTitle),
       subtitle: Text(
         line.variantTitle == 'Default Title'
-            ? line.price.format()
-            : '${line.variantTitle} · ${line.price.format()}',
+            ? context.money(line.price)
+            : '${line.variantTitle} · ${context.money(line.price)}',
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -119,9 +119,12 @@ class _CheckoutBar extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Subtotal', style: Theme.of(context).textTheme.titleMedium),
               Text(
-                cart.subtotal.format(),
+                context.l10n.subtotal,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              Text(
+                context.money(cart.subtotal),
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ],
@@ -133,6 +136,7 @@ class _CheckoutBar extends StatelessWidget {
               onPressed: busy
                   ? null
                   : () async {
+                      final l10n = context.l10n;
                       final messenger = ScaffoldMessenger.of(context);
                       var opened = false;
                       try {
@@ -145,13 +149,11 @@ class _CheckoutBar extends StatelessWidget {
                       }
                       if (!opened) {
                         messenger.showSnackBar(
-                          const SnackBar(
-                            content: Text('Could not open checkout.'),
-                          ),
+                          SnackBar(content: Text(l10n.checkoutFailed)),
                         );
                       }
                     },
-              child: const Text('Checkout'),
+              child: Text(context.l10n.checkout),
             ),
           ),
         ],

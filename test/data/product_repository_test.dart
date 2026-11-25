@@ -1,5 +1,6 @@
 import 'package:basics_storefront/core/graphql/graphql_client.dart';
 import 'package:basics_storefront/features/product/data/product_repository_graphql.dart';
+import 'package:basics_storefront/l10n/app_localizations_en.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/fixture_link.dart';
@@ -30,15 +31,18 @@ void main() {
       repository.fetchProduct('gid://shopify/Product/0'),
       throwsA(
         isA<StorefrontException>().having(
-          (e) => describeError(e),
+          (e) => describeError(AppLocalizationsEn(), e),
           'user message',
-          'Product not found',
+          'This product is no longer available.',
         ),
       ),
     );
   });
 
   test('describeError hides anything that is not a StorefrontException', () {
-    expect(describeError(StateError('boom')), isNot(contains('boom')));
+    expect(
+      describeError(AppLocalizationsEn(), StateError('boom')),
+      isNot(contains('boom')),
+    );
   });
 }
